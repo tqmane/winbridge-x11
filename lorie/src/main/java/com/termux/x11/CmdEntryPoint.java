@@ -48,6 +48,13 @@ public class CmdEntryPoint extends ICmdEntryInterface.Stub {
         Looper.loop();
     }
 
+    /** Start in the embedding app's dedicated service process. */
+    public static void startInApp(Context context, String[] args) {
+        ctx = context.getApplicationContext();
+        System.loadLibrary("Xlorie");
+        handler.post(() -> new CmdEntryPoint(args));
+    }
+
     CmdEntryPoint(String[] args) {
         if (!start(args))
             System.exit(1);

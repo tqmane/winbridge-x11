@@ -24,7 +24,7 @@ def hostApplicationId = hostProject.android.defaultConfig.applicationId ?: hostP
 android {
     namespace 'com.termux.x11'
     //noinspection GrDeprecatedAPIUsage
-    compileSdkVersion 34
+    compileSdkVersion 36
     ndkVersion termuxX11NdkVersion
     defaultConfig {
         minSdkVersion 24
@@ -38,7 +38,11 @@ android {
 
     compileOptions.sourceCompatibility JavaVersion.VERSION_1_9
     compileOptions.targetCompatibility JavaVersion.VERSION_1_9
-    externalNativeBuild.cmake.path "src/main/cpp/CMakeLists.txt"
+    if (project.hasProperty('lorieNativeDir')) {
+        sourceSets.main.jniLibs.srcDirs = [project.property('lorieNativeDir')]
+    } else {
+        externalNativeBuild.cmake.path "src/main/cpp/CMakeLists.txt"
+    }
     packagingOptions.jniLibs.useLegacyPackaging false
     buildFeatures.aidl true
     buildFeatures.buildConfig true
