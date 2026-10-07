@@ -53,6 +53,8 @@ import dalvik.annotation.optimization.FastNative;
 @Keep @SuppressLint("WrongConstant")
 @SuppressWarnings("deprecation")
 public class LorieView extends SurfaceView implements InputStub {
+    /** Optional app-owned input backend. When set, input is never forwarded to X11. */
+    public static InputStub externalInput;
     private float rendererZoom = 100f;
     private static final Rect NO_INSETS = new Rect();
 
@@ -785,25 +787,43 @@ public class LorieView extends SurfaceView implements InputStub {
         setRendererZoom(mNativeContext, isInPictureInPictureMode ? 100 : Math.round(rendererZoom));
     }
 
-    public void sendMouseEvent(float x, float y, int whichButton, boolean buttonDown, boolean relative) { sendMouseEvent(mNativeContext, x, y, whichButton, buttonDown, relative); }
+    public void sendMouseEvent(float x, float y, int whichButton, boolean buttonDown, boolean relative) {
+        if (externalInput != null) externalInput.sendMouseEvent(x, y, whichButton, buttonDown, relative);
+        else sendMouseEvent(mNativeContext, x, y, whichButton, buttonDown, relative);
+    }
     @FastNative private native void sendMouseEvent(long ptr, float x, float y, int whichButton, boolean buttonDown, boolean relative);
 
-    public void sendTouchEvent(int action, int id, int x, int y) { sendTouchEvent(mNativeContext, action, id, x, y); }
+    public void sendTouchEvent(int action, int id, int x, int y) {
+        if (externalInput != null) externalInput.sendTouchEvent(action, id, x, y);
+        else sendTouchEvent(mNativeContext, action, id, x, y);
+    }
     @FastNative private native void sendTouchEvent(long ptr, int action, int id, int x, int y);
 
-    public void sendStylusEvent(float x, float y, int pressure, int tiltX, int tiltY, int orientation, int buttons, boolean eraser, boolean mouseMode) { sendStylusEvent(mNativeContext, x, y, pressure, tiltX, tiltY, orientation, buttons, eraser, mouseMode); }
+    public void sendStylusEvent(float x, float y, int pressure, int tiltX, int tiltY, int orientation, int buttons, boolean eraser, boolean mouseMode) {
+        if (externalInput != null) externalInput.sendStylusEvent(x, y, pressure, tiltX, tiltY, orientation, buttons, eraser, mouseMode);
+        else sendStylusEvent(mNativeContext, x, y, pressure, tiltX, tiltY, orientation, buttons, eraser, mouseMode);
+    }
     @FastNative private native void sendStylusEvent(long ptr, float x, float y, int pressure, int tiltX, int tiltY, int orientation, int buttons, boolean eraser, boolean mouseMode);
 
     public void requestStylusEnabled(boolean enabled) { requestStylusEnabled(mNativeContext, enabled); }
     @FastNative private native void requestStylusEnabled(long ptr, boolean enabled);
 
-    public void sendLockKeysState(int state) { sendLockKeysState(mNativeContext, state); }
+    public void sendLockKeysState(int state) {
+        if (externalInput != null) externalInput.sendLockKeysState(state);
+        else sendLockKeysState(mNativeContext, state);
+    }
     @FastNative private native void sendLockKeysState(long ptr, int state);
 
-    public boolean sendKeyEvent(int scanCode, int keyCode, boolean keyDown) { return sendKeyEvent(mNativeContext, scanCode, keyCode, keyDown); }
+    public boolean sendKeyEvent(int scanCode, int keyCode, boolean keyDown) {
+        return externalInput != null ? externalInput.sendKeyEvent(scanCode, keyCode, keyDown)
+            : sendKeyEvent(mNativeContext, scanCode, keyCode, keyDown);
+    }
     @FastNative private native boolean sendKeyEvent(long ptr, int scanCode, int keyCode, boolean keyDown);
 
-    public void sendTextEvent(byte[] text) { sendTextEvent(mNativeContext, text); }
+    public void sendTextEvent(byte[] text) {
+        if (externalInput != null) externalInput.sendTextEvent(text);
+        else sendTextEvent(mNativeContext, text);
+    }
     @FastNative private native void sendTextEvent(long ptr, byte[] text);
 
     public boolean requestConnection() { return requestConnection(mNativeContext); }
