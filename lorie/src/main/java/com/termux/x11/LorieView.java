@@ -298,7 +298,11 @@ public class LorieView extends SurfaceView implements InputStub {
         }
     };
 
-    public LorieView(Context context, AttributeSet attrs) { super(context, attrs); }
+    public LorieView(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        // Forward pen input to the Windows/Linux client instead of Android's handwriting UI.
+        if (Build.VERSION.SDK_INT >= 33) setAutoHandwritingEnabled(false);
+    }
 
     {
         getHolder().addCallback(mSurfaceCallback);
