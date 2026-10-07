@@ -728,7 +728,7 @@ public final class ExtraKeysView extends GridLayout {
      * A button of the bar, drawing what its popup key is in the top right corner, the way a keycap
      * hints at the symbols its key can also produce.
      */
-    final class KeyButton extends Button {
+    final class KeyButton extends androidx.appcompat.widget.AppCompatButton {
         /** How much smaller than the button label the hint draws. */
         private static final float HINT_SCALE = 0.5f;
         /** An icon pads itself, so it needs more room than a label to read as the same size. */

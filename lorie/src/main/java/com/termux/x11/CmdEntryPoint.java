@@ -190,7 +190,7 @@ public class CmdEntryPoint extends ICmdEntryInterface.Stub {
         } catch (Exception e) {
             Log.e("CmdEntryPoint", "Something went wrong when preparing MainLooper", e);
         }
-        handler = new Handler();
+        handler = new Handler(Looper.getMainLooper());
     }
 
     private static void initEntryPoint() {

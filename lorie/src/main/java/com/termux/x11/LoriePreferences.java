@@ -142,14 +142,15 @@ public class LoriePreferences extends AppCompatActivity implements PreferenceFra
         getContentResolver().registerContentObserver(ACCESSIBILITY_ENABLED, true, accessibilityObserver);
     }
 
-    @SuppressLint("WrongConstant")
+    @SuppressLint({"WrongConstant", "UnspecifiedRegisterReceiverFlag"})
     @Override
     protected void onResume() {
         super.onResume();
         IntentFilter filter = new IntentFilter(ACTION_PREFERENCES_CHANGED);
-        if (SDK_INT >= Build.VERSION_CODES.O)
-            registerReceiver(receiver, filter, SDK_INT >= Build.VERSION_CODES.TIRAMISU ? RECEIVER_NOT_EXPORTED : 0);
+        if (SDK_INT >= Build.VERSION_CODES.TIRAMISU)
+            registerReceiver(receiver, filter, RECEIVER_NOT_EXPORTED);
         else
+            // Receiver flags do not exist on all Android versions supported by this library.
             registerReceiver(receiver, filter);
     }
 
